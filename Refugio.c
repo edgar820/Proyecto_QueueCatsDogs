@@ -12,7 +12,7 @@ struct strPet {
 
 struct strCatAndDogQueue{
     int size;
-    Pet first, last, firstDog, lastDog, firstCat, lastCat;
+    Pet first, last, firstCat, lastCat, firstCat, lastCat;
 };
 
 Bool pet_isDog(Pet p) {
@@ -38,7 +38,16 @@ Pet pet_create(int id, Type t) {
 }
 
 CatAndDogQueue catAndDogQueue_create(){
+    CatAndDogQueue CDQ = malloc(sizeof(struct strCatAndDogQueue));
+    CDQ->first = NULL;
+    CDQ->last = NULL;
+    CDQ->firstCat = NULL;
+    CDQ->lastCat = NULL;
+    CDQ->firstCat = NULL;
+    CDQ->lastCat = NULL;
+    CDQ->size = 0;
 
+    return CDQ;
 }
 
 int catAndDogQueue_size(CatAndDogQueue q){
@@ -58,12 +67,12 @@ Bool catAndDogQueue_isEmpty(CatAndDogQueue q){
         q->first = p;
         q->last = p;
         if(pet_isDog(p)){
-            if(q->firstDog == NULL){
-                q->firstDog = p;
-                q->lastDog = p;
+            if(q->firstCat == NULL){
+                q->firstCat = p;
+                q->lastCat = p;
             }else{
-                q->lastDog->nextSame = p;
-                q->lastDog = p;
+                q->lastCat->nextSame = p;
+                q->lastCat = p;
             }
         }else if(pet_isCat(p)){
             if(q->firstCat == NULL){
@@ -79,12 +88,12 @@ Bool catAndDogQueue_isEmpty(CatAndDogQueue q){
         p->prior = q->last;
         q->last = p;
         if(pet_isDog(p)){
-            if(q->firstDog == NULL){
-                q->firstDog = p;
-                q->lastDog = p;
+            if(q->firstCat == NULL){
+                q->firstCat = p;
+                q->lastCat = p;
             }else{
-                q->lastDog->nextSame = p;
-                q->lastDog = p;
+                q->lastCat->nextSame = p;
+                q->lastCat = p;
             }
         }else if(pet_isCat(p)){
             if(q->firstCat == NULL){
@@ -109,12 +118,12 @@ void catAndDogQueue_enqueue(CatAndDogQueue q, Pet p){
         q->last = p;
     }
     if(pet_isDog(p)){
-            if(q->firstDog == NULL){
-                q->firstDog = p;
-                q->lastDog = p;
+            if(q->firstCat == NULL){
+                q->firstCat = p;
+                q->lastCat = p;
             }else{
-                q->lastDog->nextSame = p;
-                q->lastDog = p;
+                q->lastCat->nextSame = p;
+                q->lastCat = p;
             }
         }else if(pet_isCat(p)){
             if(q->firstCat == NULL){
@@ -129,6 +138,10 @@ void catAndDogQueue_enqueue(CatAndDogQueue q, Pet p){
 }
 
 Pet catAndDogQueue_dequeue(CatAndDogQueue q){
+    if(q->first == NULL){
+        return NULL;
+    }
+
     Pet animalFuera = q->first;
     if(pet_isCat(q->first)){
         if(q->firstCat->nextSame != NULL){
@@ -138,11 +151,11 @@ Pet catAndDogQueue_dequeue(CatAndDogQueue q){
             q->lastCat = NULL;
         }
     }else if(pet_isDog(q->first)){
-        if(q->firstDog->nextSame != NULL){
-            q->firstDog = q->firstDog->nextSame;
+        if(q->firstCat->nextSame != NULL){
+            q->firstCat = q->firstCat->nextSame;
         }else{
-            q->firstDog = q->firstDog->nextSame;
-            q->lastDog = NULL;
+            q->firstCat = q->firstCat->nextSame;
+            q->lastCat = NULL;
         }
     }
     if(q->first->next != NULL){
@@ -157,9 +170,78 @@ Pet catAndDogQueue_dequeue(CatAndDogQueue q){
 }
 
 Pet catAndDogQueue_dequeueCat(CatAndDogQueue q){
+    if (q->firstCat == NULL)
+    {
+        return NULL;
+    }
+    
+    Pet gatoFuera = q->firstCat;
+    q->firstCat = gatoFuera->nextSame;
 
+    if (q->firstCat == NULL)
+    {
+        q->lastCat = NULL;
+    }
+
+    if (gatoFuera->prior != NULL)
+    {
+        gatoFuera->prior->next = gatoFuera->next;
+    }
+    else{
+        q->first = gatoFuera->next;
+    }
+
+    if (gatoFuera->next != NULL)
+    {
+        gatoFuera->next->prior = gatoFuera->prior;
+    }
+    else{
+        q->last = gatoFuera->prior;
+    }
+    
+    gatoFuera->next = NULL;
+    gatoFuera->prior = NULL;
+    gatoFuera->nextSame = NULL;
+    q->size--;
+    
+    return gatoFuera;
 }
 
 Pet catAndDogQueue_dequeueDog(CatAndDogQueue q){
+    if (q->firstCat == NULL)
+    {
+        return NULL;
+    }
     
+    Pet gatoFuera = q->firstCat;
+    q->firstCat = gatoFuera->nextSame;
+
+    if (q->firstCat == NULL)
+    {
+        q->lastCat = NULL;
+    }
+
+    if (gatoFuera->prior != NULL)
+    {
+        gatoFuera->prior->next = gatoFuera->next;
+    }
+    else{
+        q->first = gatoFuera->next;
+    }
+
+    if (gatoFuera->next != NULL)
+    {
+        gatoFuera->next->prior = gatoFuera->prior;
+    }
+    else{
+        q->last = gatoFuera->prior;
+    }
+    
+    gatoFuera->next = NULL;
+    gatoFuera->prior = NULL;
+    gatoFuera->nextSame = NULL;
+    q->size--;
+    
+    return gatoFuera;
+
 }
